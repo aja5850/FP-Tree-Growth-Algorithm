@@ -1,0 +1,125 @@
+#SECTION 1
+#THIS SECTION GENERATES AND DISPLAYS THE COUNT OF EACH VALUE FROM THE DATA FILE
+#THEN, IT DISPLAYS THE SAME LIST BUT IN DESCENDING ORDER
+
+#Step 1: Creating a list for the data set
+data_list = []
+
+#Open the data set file, recommended ".csv" files only
+with open("/Users/aj/Downloads/iris/iris.csv") as file:
+    for line in file:
+        data_list.extend(line.strip().split(','))
+
+#Stores the data within a dictionary. 
+frequent_count = {}
+
+#Creating a counter to display the count of each value
+for data in data_list:
+    if data in frequent_count:
+        frequent_count[data] += 1
+    else:
+        frequent_count[data] = 1
+
+print("\nCOUNT OF EACH VALUE:")
+for data, count in frequent_count.items():
+    if count > 1:
+        print(f"Value: {data}    Count: {count}")
+        
+        
+print("\n")
+#Minimum support = 5
+#Prints the frequent count of each value with a count greater than 5    
+filtered_count = {data: count for data, count in frequent_count.items() if count >= 5}
+#Sort the filtered dictionary in descending order of count
+L = sorted(filtered_count.items(), key=lambda item: item[1], reverse=True)
+# Print the sorted result
+print("COUNT IN DESCENDING ORDER FOR VALUES WITH MINIUM SUPPORT >= 5:")
+for data, count in L:
+    print(f"Value: {data}    Count: {count}")
+##END OF SECTION 1
+
+
+#START OF SECTION 2
+
+#Create root of tree
+#Root is NULL
+
+class FP_Tree_Node:
+    def __init__(self, data):
+      self.left = None
+      self.right = None
+      self.data = L
+      self.N = []
+      self.parent = None
+    #Create function to add child
+    def add_child(self, child):
+        child.parent = self
+        self.children.append(child)
+    #Create function to add parent
+    def parent_link(self, T):
+        T.add_child(self)
+    #Print the tree
+    def PrintTree(self):
+        print(self.data)
+
+root = FP_Tree_Node(None)
+#root.PrintTree()
+
+
+#Create sorted frequent item list
+item_count = {}
+#Run a for loop through 
+sorted_rows = []  # Create an empty list to store sorted rows
+for row in data_list:
+    row_values = row.strip().split(',')
+    # Sort the row values based on the order in L, using only the counts
+    sorted_row = sorted(row_values, key=lambda value: L.index(value) if value in L else len(L), reverse=True)
+    # Append the sorted row to the list of sorted rows
+    sorted_rows.append(','.join(sorted_row))
+
+sorted_L = list(sorted_rows)
+sorted_L = sorted(sorted_L, reverse = True)
+
+#We are going to let the sorted frequent item set be p|P
+#p will be the first element in the list, where as P will be the remaining list
+p = sorted_L[0]
+P = sorted_L[1:]
+
+#sorted_frequent is the list p and list P combined
+sorted_frequent = [p, P]
+
+#Item Names
+item_names = {}
+
+#Assign item names, which will be implemented into our tree
+for i in range(1, len(sorted_L) + 1):
+    item_name = f'item{i}'
+    item_names[item_name] = data
+
+item_names = list(item_names.items())
+
+print("\n")
+for element in sorted_frequent:
+    print(element)
+
+print("\n")
+
+
+#Create insert tree function
+
+def insert_tree(sorted_frequent, T):
+    for N in T:
+        if N.item_names == p.item_names: #if the child node has the same name as in the sorted list
+            N += 1 #Increment the count of the child node
+        else:
+            N = FP_Tree_Node(L) #Create a new node, N
+            N = 1               #Set the count of N = 1
+            T.add_parent(N)      #Link N to the parent node T
+            N.add_child(N.item_names) #Link N to nodes with same item name
+            break
+        #If P is not empty, we will call the insert_tree function recursively
+        if P:
+            insert_tree(P, N)
+            
+        
+root.PrintTree()
