@@ -1,0 +1,1 @@
+Implementation of FP Growth Machine Learning Algorithm in Python. The algorithm reads from a dataset and collects the set of frequent items and their support counts. The frequent items are then put into a list and listed in descending order of support count.
